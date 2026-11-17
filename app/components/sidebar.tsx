@@ -238,36 +238,43 @@ export function Sidebar({
         </button>
 
         {currentUser && (
-          <div className="flex items-center gap-3 rounded-md px-3 py-2">
-            <UserAvatar
-              name={currentUser.name}
-              avatarUrl={currentUser.avatarUrl}
-            />
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-sm font-medium">
-                {currentUser.name}
-              </div>
-              <div className="truncate text-xs capitalize text-sidebar-foreground/50">
-                {currentUser.role}
+          <>
+            <div className="flex items-center gap-3 rounded-md px-3 py-2">
+              <UserAvatar
+                name={currentUser.name}
+                avatarUrl={currentUser.avatarUrl}
+              />
+              <div className="flex-1 min-w-0">
+                <div
+                  className="line-clamp-2 break-words text-sm font-medium"
+                  title={currentUser.name}
+                >
+                  {currentUser.name}
+                </div>
+                <div className="truncate text-xs capitalize text-sidebar-foreground/50">
+                  {currentUser.role}
+                </div>
               </div>
             </div>
-            <NavLink
-              to="/settings"
-              title="Settings"
-              className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            >
-              <Settings className="size-4" />
-            </NavLink>
-            <Form method="post" action="/api/logout">
-              <button
-                type="submit"
-                title="Sign out"
+            <div className="flex items-center justify-end gap-1 px-3">
+              <NavLink
+                to="/settings"
+                title="Settings"
                 className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               >
-                <LogOut className="size-4" />
-              </button>
-            </Form>
-          </div>
+                <Settings className="size-4" />
+              </NavLink>
+              <Form method="post" action="/api/logout">
+                <button
+                  type="submit"
+                  title="Sign out"
+                  className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                >
+                  <LogOut className="size-4" />
+                </button>
+              </Form>
+            </div>
+          </>
         )}
       </div>
     </aside>
