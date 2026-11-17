@@ -1,8 +1,8 @@
-import { NavLink, Form } from "react-router";
+import { NavLink } from "react-router";
 import { useState, useEffect } from "react";
 import { cn } from "~/lib/utils";
 import { UserRole } from "~/db/schema";
-import { UserAvatar } from "~/components/user-avatar";
+import { ProfileMenu } from "~/components/profile-menu";
 import { NotificationBell } from "~/components/notification-feed";
 import {
   Bookmark,
@@ -18,8 +18,6 @@ import {
   UsersRound,
   Moon,
   Sun,
-  LogOut,
-  Settings,
 } from "lucide-react";
 
 type CurrentUser = {
@@ -237,38 +235,7 @@ export function Sidebar({
           {isDark ? "Light Mode" : "Dark Mode"}
         </button>
 
-        {currentUser && (
-          <div className="flex items-center gap-3 rounded-md px-3 py-2">
-            <UserAvatar
-              name={currentUser.name}
-              avatarUrl={currentUser.avatarUrl}
-            />
-            <div className="flex-1 min-w-0">
-              <div className="truncate text-sm font-medium">
-                {currentUser.name}
-              </div>
-              <div className="truncate text-xs capitalize text-sidebar-foreground/50">
-                {currentUser.role}
-              </div>
-            </div>
-            <NavLink
-              to="/settings"
-              title="Settings"
-              className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            >
-              <Settings className="size-4" />
-            </NavLink>
-            <Form method="post" action="/api/logout">
-              <button
-                type="submit"
-                title="Sign out"
-                className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              >
-                <LogOut className="size-4" />
-              </button>
-            </Form>
-          </div>
-        )}
+        {currentUser && <ProfileMenu user={currentUser} />}
       </div>
     </aside>
   );
