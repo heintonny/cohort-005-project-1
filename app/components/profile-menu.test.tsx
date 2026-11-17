@@ -20,9 +20,7 @@ const bossy: ProfileMenuUser = {
 describe("ProfileMenu", () => {
   it("shows the full name without truncating it", () => {
     const html = render(bossy);
-    expect(html).toContain(">Bossy McBossface</div>");
-    expect(html).toContain('title="Bossy McBossface"');
-    const nameDiv = html.match(/<div class="([^"]*)" title="Bossy McBossface"/);
+    const nameDiv = html.match(/<div class="([^"]*)">Bossy McBossface<\/div>/);
     expect(nameDiv?.[1]).not.toContain("truncate");
     expect(nameDiv?.[1]).toContain("break-words");
   });

@@ -21,10 +21,7 @@ export function ProfileMenu({ user }: { user: ProfileMenuUser }) {
         className="shrink-0"
       />
       <div className="flex-1 min-w-0">
-        <div
-          className="break-words text-sm font-medium leading-tight"
-          title={user.name}
-        >
+        <div className="break-words text-sm font-medium leading-tight">
           {user.name}
         </div>
         <div className="truncate text-xs capitalize text-sidebar-foreground/50">
