@@ -115,6 +115,9 @@ const navItems: NavItem[] = [
   },
 ];
 
+const userActionClass =
+  "rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
+
 function isVisible(item: NavItem, role: UserRole | null): boolean {
   if (item.roles === "all") return true;
   if (!role) return false;
@@ -260,7 +263,7 @@ export function Sidebar({
               <NavLink
                 to="/settings"
                 title="Settings"
-                className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                className={userActionClass}
               >
                 <Settings className="size-4" />
               </NavLink>
@@ -268,7 +271,7 @@ export function Sidebar({
                 <button
                   type="submit"
                   title="Sign out"
-                  className="rounded-md p-1 text-sidebar-foreground/50 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                  className={userActionClass}
                 >
                   <LogOut className="size-4" />
                 </button>
