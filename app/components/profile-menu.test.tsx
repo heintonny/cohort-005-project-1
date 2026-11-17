@@ -1,16 +1,21 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createRoutesStub } from "react-router";
-import { ProfileMenu } from "~/components/profile-menu";
+import { ProfileMenu, type ProfileMenuUser } from "~/components/profile-menu";
+import { UserRole } from "~/db/schema";
 
-function render(user: Parameters<typeof ProfileMenu>[0]["user"]) {
+function render(user: ProfileMenuUser) {
   const Stub = createRoutesStub([
     { path: "/", Component: () => <ProfileMenu user={user} /> },
   ]);
   return renderToStaticMarkup(<Stub initialEntries={["/"]} />);
 }
 
-const bossy = { name: "Bossy McBossface", role: "student", avatarUrl: null };
+const bossy: ProfileMenuUser = {
+  name: "Bossy McBossface",
+  role: UserRole.Student,
+  avatarUrl: null,
+};
 
 describe("ProfileMenu", () => {
   it("shows the full name without truncating it", () => {

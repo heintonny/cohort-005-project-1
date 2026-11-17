@@ -1,10 +1,11 @@
 import { NavLink, Form } from "react-router";
 import { LogOut, Settings } from "lucide-react";
 import { UserAvatar } from "~/components/user-avatar";
+import type { UserRole } from "~/db/schema";
 
-type ProfileMenuUser = {
+export type ProfileMenuUser = {
   name: string;
-  role: string;
+  role: UserRole;
   avatarUrl: string | null;
 };
 
