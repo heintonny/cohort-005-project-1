@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createRoutesStub } from "react-router";
+import { Window } from "happy-dom";
 import { UserRole } from "~/db/schema";
 import { Sidebar } from "~/components/sidebar";
+
+const LONG_NAME = "Bossy McBossface";
+const AVATAR_URL = "https://example.com/avatar.png";
 
 function renderSidebarFor(name: string) {
   const Stub = createRoutesStub([
@@ -14,52 +18,59 @@ function renderSidebarFor(name: string) {
             id: 10,
             name,
             role: UserRole.Student,
-            avatarUrl: null,
+            avatarUrl: AVATAR_URL,
           }}
         />
       ),
     },
   ]);
-  return renderToStaticMarkup(<Stub initialEntries={["/"]} />);
+  const { document } = new Window();
+  document.body.innerHTML = renderToStaticMarkup(
+    <Stub initialEntries={["/"]} />
+  );
+  return document;
 }
 
-const NAME = "Bossy McBossface";
+type SidebarDocument = ReturnType<typeof renderSidebarFor>;
 
-function nameTag(html: string) {
-  const match = html.match(new RegExp(`<div[^>]*>${NAME}</div>`));
-  return match?.[0] ?? "";
+function nameElement(document: SidebarDocument, name: string) {
+  const element = [...document.querySelectorAll("div")].find(
+    (div) => div.children.length === 0 && div.textContent === name
+  );
+  if (!element) throw new Error(`No element shows the name "${name}"`);
+  return element;
 }
 
-function userRow(html: string) {
-  const start = html.lastIndexOf("<div", html.indexOf(`>${NAME}</div>`));
-  const rowStart = html.lastIndexOf('<div class="flex items-center', start);
-  const roleEnd = html.indexOf("</div></div></div>", start);
-  return html.slice(rowStart, roleEnd);
+/** The smallest element that holds both the user's avatar and their name. */
+function userRow(document: SidebarDocument, name: string) {
+  const avatar = document.querySelector(`img[alt="${name}"]`);
+  let row = nameElement(document, name).parentElement;
+  while (row && avatar && !row.contains(avatar)) row = row.parentElement;
+  if (!row) throw new Error("No element holds both the avatar and the name");
+  return row;
 }
 
 describe("Sidebar user row", () => {
   it("renders the full name, with the name as its title", () => {
-    const tag = nameTag(renderSidebarFor(NAME));
+    const name = nameElement(renderSidebarFor(LONG_NAME), LONG_NAME);
 
-    expect(tag).not.toBe("");
-    expect(tag).toContain(`title="${NAME}"`);
+    expect(name.getAttribute("title")).toBe(LONG_NAME);
   });
 
   it("wraps the name onto up to two lines instead of cutting it to one", () => {
-    const tag = nameTag(renderSidebarFor(NAME));
+    const name = nameElement(renderSidebarFor(LONG_NAME), LONG_NAME);
 
-    expect(tag).toMatch(/class="[^"]*\bline-clamp-2\b/);
-    expect(tag).not.toMatch(/class="[^"]*\btruncate\b/);
+    expect(name.classList.contains("line-clamp-2")).toBe(true);
+    expect(name.classList.contains("truncate")).toBe(false);
   });
 
   it("puts Settings and Sign out on their own row, not beside the name", () => {
-    const html = renderSidebarFor(NAME);
-    const row = userRow(html);
+    const document = renderSidebarFor(LONG_NAME);
+    const row = userRow(document, LONG_NAME);
 
-    expect(row).toContain(`>${NAME}</div>`);
-    expect(row).not.toContain('title="Settings"');
-    expect(row).not.toContain('title="Sign out"');
-    expect(html).toContain('title="Settings"');
-    expect(html).toContain('title="Sign out"');
+    expect(row.querySelector('[title="Settings"]')).toBeNull();
+    expect(row.querySelector('[title="Sign out"]')).toBeNull();
+    expect(document.querySelector('[title="Settings"]')).not.toBeNull();
+    expect(document.querySelector('[title="Sign out"]')).not.toBeNull();
   });
 });
